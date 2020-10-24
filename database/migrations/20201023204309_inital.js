@@ -17,6 +17,13 @@ exports.up = async function (knex) {
     table.varchar('description', 255).notNull()
     table.varchar('notes', 255)
     table.boolean('completed').notNull().defaultTo(false)
+    table
+      .integer('project_id')
+      .references('id')
+      .inTable('project')
+      .unsigned()
+      .notNull()
+      .onDelete('CASCADE')
   })
 
   await knex.schema.createTable('project_resource', (table) => {
@@ -36,4 +43,9 @@ exports.up = async function (knex) {
   })
 }
 
-exports.down = async function (knex) {}
+exports.down = async function (knex) {
+  await knex.schema.dropTableIfExists('project_resource')
+  await knex.schema.dropTableIfExists('task')
+  await knex.schema.dropTableIfExists('resource')
+  await knex.schema.dropTableIfExists('project')
+}
